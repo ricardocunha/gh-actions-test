@@ -21,5 +21,4 @@ jobs:
           native-image: true
       - name: Build with maven
         run: |
-          AWSPWD=$(aws ecr get-login-password)
           mvn -DskipTests -B clean package -Dnative -Dquarkus.package.type=native -Dquarkus.container-image.build=true -Dquarkus.container-image.username=ricardocunha -Dquarkus.container-image.password=${{ secrets.DOCKER_ACCESS_TOKEN }} -Dquarkus.container-image.push=true -Dquarkus.container-image.image=$IMAGE_NAME
