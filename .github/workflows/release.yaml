@@ -19,7 +19,8 @@ jobs:
           java-version: 11
           graalvm-version: 22.3.0
           native-image: true
+      - name:
+        run: echo "IMAGE_NAME=docker.io/ricardocunha/quarkus-sample:native_$(date +%m%d%Y%H%M%S)" >> $GITHUB_ENV
       - name: Build with maven
         run: |
-          echo "IMAGE_NAME=docker.io/ricardocunha/quarkus-sample:native_$(date +%m%d%Y%H%M%S)" >> $GITHUB_ENV
           mvn -DskipTests -B clean package -Dnative -Dquarkus.package.type=native -Dquarkus.container-image.build=true -Dquarkus.container-image.username=ricardocunha -Dquarkus.container-image.password=${{ secrets.DOCKER_ACCESS_TOKEN }} -Dquarkus.container-image.push=true -Dquarkus.container-image.image=$IMAGE_NAME
