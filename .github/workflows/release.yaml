@@ -21,4 +21,5 @@ jobs:
           native-image: true
       - name: Build with maven
         run: |
+          echo "IMAGE_NAME=docker.io/ricardocunha/quarkus-sample:native_$(date +%m%d%Y%H%M%S)" >> $GITHUB_ENV
           mvn -DskipTests -B clean package -Dnative -Dquarkus.package.type=native -Dquarkus.container-image.build=true -Dquarkus.container-image.username=ricardocunha -Dquarkus.container-image.password=${{ secrets.DOCKER_ACCESS_TOKEN }} -Dquarkus.container-image.push=true -Dquarkus.container-image.image=$IMAGE_NAME
