@@ -1,0 +1,37 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: unfor19/install-aws-cli-action@master
+        with:
+          version: "2.6.3"
+      - run: aws --version
+        shell: bash
+      - uses: ayltai/setup-graalvm@v1
+        with:
+          java-version: 11
+          graalvm-version: 21.3.0
+          native-image: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: aws-actions/setup-sam@v1
+      - name: Build with maven
+        run: |
+          AWSPWD=$(aws ecr get-login-password)
+          mvn -DskipTests -B clean package -Dnative -Dquarkus.package.type=native -Dquarkus.container-image.build=true -Dquarkus.container-image.username=ricardocunha -Dquarkus.container-image.password=${{ secrets.DOCKER_ACCESS_TOKEN }} -Dquarkus.container-image.push=true -Dquarkus.container-image.image=$IMAGE_NAME
